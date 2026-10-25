@@ -270,11 +270,14 @@ def _contrast(a: str, b: str) -> float:
     return (hi + 0.05) / (lo + 0.05)
 
 
-def test_text_colours_are_readable_on_the_dark_ground(built: Path):
+def test_every_text_colour_is_readable_on_the_paper(built: Path):
     """
-    The bug this guards against: a colour that looks rich as a FILL was used for
-    TEXT. Burgundy on near-black measures 3.9:1 - legible as large display type,
-    muddy at 11px, which is what every eyebrow and link was set in.
+    The bug this guards against, twice over: a colour that looks rich as a FILL
+    used for TEXT. Burgundy on near-black measured 3.9:1 and made every eyebrow
+    and link look muddy.
+
+    The same oxblood on warm paper measures 8.5:1 - which is why the palette is
+    light, and why this test checks the ground it is actually on.
     """
     tokens = _tokens()
     minimums = {
@@ -282,7 +285,7 @@ def test_text_colours_are_readable_on_the_dark_ground(built: Path):
         "ink-soft": 4.5,
         "ink-dim": 4.5,
         "accent": 4.5,
-        "accent-soft": 4.5,
+        "accent-deep": 4.5,
     }
 
     for name, minimum in minimums.items():
@@ -295,16 +298,23 @@ def test_text_colours_are_readable_on_the_dark_ground(built: Path):
             )
 
 
-def test_the_dark_fill_is_never_used_as_a_text_colour(built: Path):
-    """--wine is allowed in backgrounds, borders and glows. Not in `color:`."""
-    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
-    offenders = re.findall(r"(?<![-a-z])color:\s*var\(--wine\)", css)
-    assert not offenders, (
-        "--wine used as a text colour; it is a dark fill and measures under 2:1 "
-        "on the page background"
-    )
-
-
-def test_white_text_on_the_fill_is_readable(built: Path):
+def test_the_accent_works_as_both_text_and_fill(built: Path):
+    """
+    One accent has to do two jobs here: coloured text on paper, and a button fill
+    with white text on it. Both directions have to clear 4.5:1.
+    """
     tokens = _tokens()
-    assert _contrast("#f7ede9", tokens["wine"]) >= 4.5
+    assert _contrast(tokens["accent"], tokens["bg"]) >= 4.5, "accent text on paper"
+    assert _contrast(tokens["accent"], tokens["surface"]) >= 4.5, "accent text on a card"
+    assert _contrast("#ffffff", tokens["accent"]) >= 4.5, "white text on an accent button"
+
+
+def test_the_palette_is_light_and_warm(built: Path):
+    """Guards the direction: paper, not slate, and no cool grey-blue creeping in."""
+    tokens = _tokens()
+    bg = tokens["bg"].lstrip("#")
+    r, g, b = (int(bg[i:i + 2], 16) for i in (0, 2, 4))
+
+    assert _luminance(tokens["bg"]) > 0.8, "the ground should be light"
+    assert r >= g >= b, "the ground should be warm (red >= green >= blue), not cool"
+    assert tokens["ink"].lstrip("#")[0:2] <= "40", "body text should be near-black"
