@@ -1,12 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#8b7bff"/>
-      <stop offset="1" stop-color="#22d3ee"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="14" fill="#07080b"/>
-  <rect x="3" y="3" width="58" height="58" rx="12" fill="url(#g)"/>
-  <text x="32" y="43" font-family="ui-monospace,Menlo,monospace" font-size="27" font-weight="700"
-        text-anchor="middle" fill="#08090c">VS</text>
+  <rect width="64" height="64" rx="12" fill="#faf7f2"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="11.25" fill="none"
+        stroke="#8a1c3a" stroke-opacity="0.25" stroke-width="1.5"/>
+  <rect x="9" y="49" width="15" height="3" fill="#8a1c3a"/>
+  <text x="32" y="43" font-family="Georgia, 'Times New Roman', serif" font-size="30"
+        text-anchor="middle" fill="#8a1c3a" letter-spacing="-1.5">VS</text>
 </svg>
