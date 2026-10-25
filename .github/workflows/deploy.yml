@@ -1,0 +1,68 @@
+# Build the site, test it, and publish it to GitHub Pages.
+#
+# One-time setup: repo Settings -> Pages -> Source = "GitHub Actions".
+
+name: Build, test and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install build dependencies
+        run: pip install -r requirements.txt
+
+      # The resume is generated first, because the site copies it in.
+      - name: Build the resume PDF
+        run: python tools/build_resume.py
+
+      - name: Build the site
+        run: python tools/build_site.py
+
+      # Fails on a broken link, a missing section, a shipped placeholder, or an
+      # email address that does not match the profile.
+      - name: Run the tests
+        run: python -m pytest tests -q
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload the built site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
