@@ -1,8 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#faf7f2"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b7bff"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="#08090c"/>
   <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="11.25" fill="none"
-        stroke="#1c3a5e" stroke-opacity="0.25" stroke-width="1.5"/>
-  <rect x="9" y="49" width="15" height="3" fill="#1c3a5e"/>
+        stroke="url(#g)" stroke-opacity="0.45" stroke-width="1.5"/>
   <text x="32" y="43" font-family="Georgia, 'Times New Roman', serif" font-size="30"
-        text-anchor="middle" fill="#1c3a5e" letter-spacing="-1.5">VS</text>
+        text-anchor="middle" fill="url(#g)" letter-spacing="-1.5">VS</text>
 </svg>
