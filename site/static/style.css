@@ -34,6 +34,11 @@
 
   --maxw: 1120px;
   --gutter: clamp(1.15rem, 4vw, 2.5rem);
+  /* Fluid column minimums. The `min(..., 100%)` is the load-bearing part: a bare
+     300px minimum is wider than the container on a 320px phone, which produces a
+     horizontal scrollbar and a page that looks broken. */
+  --col: min(300px, 100%);
+  --col-tight: min(240px, 100%);
 
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -62,7 +67,10 @@ body {
   font-size: 16px;
   line-height: 1.72;
   -webkit-font-smoothing: antialiased;
+  /* clip rather than hidden: it stops the sideways scroll without turning the
+     body into a scroll container. `hidden` stays first as the fallback. */
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 img { max-width: 100%; display: block; }
@@ -89,8 +97,15 @@ a:hover { color: var(--burgundy-lit); }
 
 /* ------------------------------------------------------------- typography */
 
-h1, h2, h3, h4 { margin: 0; font-weight: 400; line-height: 1.14; }
-p { margin: 0 0 1rem; }
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.14;
+  /* Stops a heading leaving one word stranded on its own line. Ignored by
+     browsers that do not support it, which is a graceful nothing. */
+  text-wrap: balance;
+}
+p { margin: 0 0 1rem; text-wrap: pretty; }
 p:last-child { margin-bottom: 0; }
 
 /* The display moments are set in the serif. Everything functional stays sans -
@@ -138,6 +153,7 @@ p:last-child { margin-bottom: 0; }
 /* ------------------------------------------------------------------ layout */
 
 .wrap {
+  width: 100%;
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 var(--gutter);
@@ -168,6 +184,7 @@ section.block {
 }
 
 .nav__inner {
+  width: 100%;
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0.9rem var(--gutter);
@@ -183,6 +200,8 @@ section.block {
   font-family: var(--serif);
   font-size: 1.02rem;
   margin-right: auto;
+  min-width: 0;
+  white-space: nowrap;
 }
 .brand__mark {
   width: 30px;
@@ -197,12 +216,19 @@ section.block {
   color: #f7ede9;
 }
 
-.nav__links { display: flex; align-items: center; gap: 0.15rem; }
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
 .nav__links a {
   font-size: 0.82rem;
   color: var(--ink-soft);
   padding: 0.45rem 0.75rem;
   border-radius: 2px;
+  white-space: nowrap;
   transition: color 0.2s, background 0.2s;
 }
 .nav__links a:hover { color: var(--ink); background: rgba(245, 242, 238, 0.05); }
@@ -374,11 +400,13 @@ section.block {
 
 .hero__stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
   gap: 1.2rem 1.5rem;
   border-top: 1px solid var(--line);
   padding-top: 1.8rem;
-  max-width: 640px;
+  /* No max-width: the stats line up with the column above them rather than
+     stopping short at an arbitrary 640px. */
+  width: 100%;
 }
 .stat__value {
   font-family: var(--serif);
@@ -432,6 +460,9 @@ section.block {
 
 .card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -469,7 +500,10 @@ section.block {
   border: 1px solid var(--line);
   border-radius: 2px;
   padding: 0.22rem 0.5rem;
-  white-space: nowrap;
+  /* A long entry ("Functions (Blob, Queue, Service Bus, Cosmos, Timer)") wraps
+     inside its chip instead of forcing the card wider than its column. */
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 /* ------------------------------------------------------------- about / lists */
@@ -567,9 +601,13 @@ section.block {
 .grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--col), 1fr));
+  align-items: stretch;
 }
-.grid--tight { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.grid--tight {
+  grid-template-columns: repeat(auto-fit, minmax(var(--col-tight), 1fr));
+  align-items: stretch;
+}
 
 /* -------------------------------------------------------------- projects */
 
@@ -591,11 +629,21 @@ section.block {
   margin-top: 1.1rem;
   opacity: 0.9;
 }
+/* Chips and links are pushed to the bottom of the card, so a row of cards with
+   different amounts of text still lines up along its bottom edge. */
+.project__foot,
+.card__foot {
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+.project__foot .chips,
+.card__foot .chips { margin-top: 0; }
+
 .project__links {
   display: flex;
-  gap: 1rem;
-  margin-top: auto;
-  padding-top: 1.2rem;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  padding-top: 1rem;
   font-size: 0.8rem;
   font-family: var(--mono);
   letter-spacing: 0.04em;
@@ -613,6 +661,9 @@ section.block {
 /* ---------------------------------------------------------------- skills */
 
 .skillgroup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border-top: 1px solid var(--line);
   padding: 1.15rem 0 0;
 }
@@ -652,7 +703,9 @@ section.block {
 /* --------------------------------------------------------------- writing */
 
 .note {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -677,7 +730,8 @@ section.block {
 .note__title { font-size: 1.22rem; margin-bottom: 0.6rem; }
 .note__summary { color: var(--ink-soft); font-size: 0.92rem; }
 .note__more {
-  margin-top: 1.1rem;
+  margin-top: auto;
+  padding-top: 1.1rem;
   font-family: var(--mono);
   font-size: 0.74rem;
   letter-spacing: 0.05em;
@@ -874,10 +928,20 @@ section.block {
   .contact__portrait { width: 96px; }
 }
 
-@media (max-width: 760px) {
+/* Wider screens get a wider page rather than wider margins. */
+@media (min-width: 1440px) {
+  :root { --maxw: 1240px; }
+}
+
+/* ---------------------------------------------------------------------------
+   The nav carries eight links and a button. Below about 1020px they stop
+   fitting on one line, so the panel takes over - previously the row simply
+   overflowed, which is what made the header look broken on a laptop.
+   ------------------------------------------------------------------------- */
+@media (max-width: 1020px) {
   .nav__links {
     position: fixed;
-    top: 60px;
+    top: 62px;
     left: var(--gutter);
     right: var(--gutter);
     flex-direction: column;
@@ -888,12 +952,35 @@ section.block {
     border-radius: var(--radius);
     padding: 0.6rem;
     display: none;
+    max-height: calc(100vh - 84px);
+    overflow-y: auto;
     box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.95);
   }
   .nav__links.is-open { display: flex; }
   .nav__links a { padding: 0.7rem 0.8rem; }
   .nav__cta { text-align: center; }
   .nav__toggle { display: grid; }
-  .job__period { margin-left: 0; }
+}
+
+@media (max-width: 720px) {
+  .job__head { gap: 0.2rem 0.6rem; }
+  .job__period,
   .edu__period { margin-left: 0; }
+  .timeline { padding-left: 1.5rem; }
+  .job::before { left: -1.5rem; }
+}
+
+@media (max-width: 560px) {
+  .hero__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .stat__value { font-size: 1.5rem; }
+  .hero__actions { flex-direction: column; align-items: stretch; }
+  .hero__actions .btn { justify-content: center; }
+  .emailrow__addr { width: 100%; }
+  .btn { padding: 0.75rem 1.2rem; }
+}
+
+@media (max-width: 400px) {
+  .hero__name { font-size: 2.5rem; }
+  .section__title { font-size: 1.7rem; }
+  .card, .note { padding: 1.25rem; }
 }
