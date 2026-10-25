@@ -238,3 +238,73 @@ def test_long_chips_can_wrap(built: Path):
 
     assert "overflow-wrap: anywhere" in chip_rule
     assert "nowrap" not in chip_rule, "a chip that cannot wrap can overflow its card"
+
+
+# ----------------------------------------------------------------- the palette
+
+
+def _tokens() -> dict:
+    """Pull the colour tokens out of :root."""
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+    root = css.split(":root {")[1].split("}")[0]
+    return {
+        m.group(1): m.group(2)
+        for m in re.finditer(r"--([a-z-]+):\s*(#[0-9a-fA-F]{6})", root)
+    }
+
+
+def _luminance(colour: str) -> float:
+    h = colour.lstrip("#")
+    channels = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+
+    def linear(c: float) -> float:
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+    r, g, b = (linear(c) for c in channels)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _contrast(a: str, b: str) -> float:
+    la, lb = _luminance(a), _luminance(b)
+    hi, lo = max(la, lb), min(la, lb)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def test_text_colours_are_readable_on_the_dark_ground(built: Path):
+    """
+    The bug this guards against: a colour that looks rich as a FILL was used for
+    TEXT. Burgundy on near-black measures 3.9:1 - legible as large display type,
+    muddy at 11px, which is what every eyebrow and link was set in.
+    """
+    tokens = _tokens()
+    minimums = {
+        "ink": 7.0,
+        "ink-soft": 4.5,
+        "ink-dim": 4.5,
+        "accent": 4.5,
+        "accent-soft": 4.5,
+    }
+
+    for name, minimum in minimums.items():
+        assert name in tokens, f"--{name} is missing from :root"
+        for backdrop, label in (("bg", "page"), ("surface", "card")):
+            ratio = _contrast(tokens[name], tokens[backdrop])
+            assert ratio >= minimum, (
+                f"--{name} on the {label} is {ratio:.2f}:1, below the {minimum}:1 "
+                f"this needs for small text"
+            )
+
+
+def test_the_dark_fill_is_never_used_as_a_text_colour(built: Path):
+    """--wine is allowed in backgrounds, borders and glows. Not in `color:`."""
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+    offenders = re.findall(r"(?<![-a-z])color:\s*var\(--wine\)", css)
+    assert not offenders, (
+        "--wine used as a text colour; it is a dark fill and measures under 2:1 "
+        "on the page background"
+    )
+
+
+def test_white_text_on_the_fill_is_readable(built: Path):
+    tokens = _tokens()
+    assert _contrast("#f7ede9", tokens["wine"]) >= 4.5
