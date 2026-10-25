@@ -270,14 +270,14 @@ def _contrast(a: str, b: str) -> float:
     return (hi + 0.05) / (lo + 0.05)
 
 
-def test_every_text_colour_is_readable_on_the_paper(built: Path):
+def test_every_text_colour_is_readable_on_the_ground(built: Path):
     """
-    The bug this guards against, twice over: a colour that looks rich as a FILL
-    used for TEXT. Burgundy on near-black measured 3.9:1 and made every eyebrow
-    and link look muddy.
+    The bug this guards against, three palettes running: a colour that looks rich
+    as a FILL being used for TEXT.
 
-    The same oxblood on warm paper measures 8.5:1 - which is why the palette is
-    light, and why this test checks the ground it is actually on.
+    On this dark ground the trap is the identity violet. #6d28d9 is the obvious
+    choice and measures 2.8:1 - unreadable at 11px, which is what every eyebrow
+    and link would be set in. --accent is the LIGHT violet instead, at 8.4:1.
     """
     tokens = _tokens()
     minimums = {
@@ -300,21 +300,28 @@ def test_every_text_colour_is_readable_on_the_paper(built: Path):
 
 def test_the_accent_works_as_both_text_and_fill(built: Path):
     """
-    One accent has to do two jobs here: coloured text on paper, and a button fill
-    with white text on it. Both directions have to clear 4.5:1.
+    The accent has to work as coloured text on the dark ground, and the primary
+    button is the gradient - so whatever sits on the gradient has to be readable
+    at BOTH ends of it, not just on average.
     """
     tokens = _tokens()
-    assert _contrast(tokens["accent"], tokens["bg"]) >= 4.5, "accent text on paper"
+    assert _contrast(tokens["accent"], tokens["bg"]) >= 4.5, "accent text on the ground"
     assert _contrast(tokens["accent"], tokens["surface"]) >= 4.5, "accent text on a card"
-    assert _contrast("#ffffff", tokens["accent"]) >= 4.5, "white text on an accent button"
+
+    # The gradient runs violet -> cyan. White on the violet end is only 3.3:1,
+    # which is why the button takes dark text.
+    for stop in ("violet", "cyan"):
+        ratio = _contrast(tokens["bg"], tokens[stop])
+        assert ratio >= 4.5, f"dark text on the {stop} end of the gradient is {ratio:.2f}:1"
 
 
-def test_the_palette_is_light_and_warm(built: Path):
-    """Guards the direction: paper, not slate, and no cool grey-blue creeping in."""
+def test_the_palette_is_dark(built: Path):
+    """Guards the direction: near-black ground, cool identity, light type."""
     tokens = _tokens()
     bg = tokens["bg"].lstrip("#")
     r, g, b = (int(bg[i:i + 2], 16) for i in (0, 2, 4))
 
-    assert _luminance(tokens["bg"]) > 0.8, "the ground should be light"
-    assert r >= g >= b, "the ground should be warm (red >= green >= blue), not cool"
-    assert tokens["ink"].lstrip("#")[0:2] <= "40", "body text should be near-black"
+    assert _luminance(tokens["bg"]) < 0.02, "the ground should be near-black"
+    assert b >= g >= r, "the ground should stay cool (blue >= green >= red)"
+    assert _luminance(tokens["ink"]) > 0.7, "body text should be light"
+    assert tokens["violet"] in (tokens["violet"],), "the identity violet must stay defined"
