@@ -85,7 +85,7 @@ def page(
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}">
 <meta name="author" content="{esc(PROFILE['name'])}">
-<meta name="theme-color" content="#07080b">
+<meta name="theme-color" content="#050505">
 <link rel="canonical" href="{esc(PROFILE['github'].replace('github.com/vishnuu12', 'vishnuu12.github.io/portfolio'))}/">
 <link rel="icon" href="{p}favicon.svg" type="image/svg+xml">
 
@@ -162,8 +162,8 @@ def hero(depth: int) -> str:
       <span class="hero__status"><i></i> Open to interesting work &middot; {esc(PROFILE['location'])}</span>
       <h1 class="hero__name">{esc(PROFILE['name'])}</h1>
       <p class="hero__role">
-        <span class="grad-text">{esc(PROFILE['title'])}</span>
-        <span style="color:var(--ink-dim)"> &middot; </span>{esc(PROFILE['subtitle'])}
+        <span>{esc(PROFILE['title'])}</span>
+        <span> &middot; {esc(PROFILE['subtitle'])}</span>
       </p>
       <p class="hero__pitch">{esc(PROFILE['pitch'])}</p>
       <div class="hero__actions">
@@ -351,18 +351,25 @@ def contact_section() -> str:
     return f"""<section class="block" id="contact">
   <div class="wrap reveal">
     <div class="contact">
-      <p class="eyebrow">08 &mdash; Contact</p>
-      <h2>Let's talk about what you're building.</h2>
-      <p>
-        I am happy to talk about .NET and Angular work, cloud architecture,
-        anything involving an LLM, or a project of yours that needs a second pair
-        of hands. Email is the fastest way to reach me.
-      </p>
-      <div class="emailrow">
-        <span class="emailrow__addr">{esc(PROFILE['email'])}</span>
-        <button class="copybtn" type="button" data-copy="{esc(PROFILE['email'])}">copy</button>
-        <a class="btn btn--primary" href="mailto:{esc(PROFILE['email'])}">Send an email</a>
-        <a class="btn" href="{esc(PROFILE['resume'])}" download>Download resume</a>
+      <div class="contact__inner">
+        <div>
+          <p class="eyebrow">08 &mdash; Contact</p>
+          <h2>Let's talk about what you're building.</h2>
+          <p>
+            I am happy to talk about .NET and Angular work, cloud architecture,
+            anything involving an LLM, or a project of yours that needs a second
+            pair of hands. Email is the fastest way to reach me.
+          </p>
+          <div class="emailrow">
+            <span class="emailrow__addr">{esc(PROFILE['email'])}</span>
+            <button class="copybtn" type="button" data-copy="{esc(PROFILE['email'])}">copy</button>
+            <a class="btn btn--primary" href="mailto:{esc(PROFILE['email'])}">Send an email</a>
+            <a class="btn" href="{esc(PROFILE['resume'])}" download>Download resume</a>
+          </div>
+        </div>
+        <div class="contact__portrait">
+          <img src="{esc(PROFILE['avatar'])}" alt="" width="170" height="170" loading="lazy">
+        </div>
       </div>
     </div>
   </div>
