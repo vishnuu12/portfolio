@@ -236,7 +236,7 @@ def work_section() -> str:
   <p class="card__meta">{esc(project['client'])} &middot; {esc(project['role'])} &middot; {esc(project['duration'])} &middot; team of {esc(project['team'])}</p>
   <p class="card__body">{esc(project['summary'])}</p>
   {ticks(project['contributions'])}
-  {chips(project['stack'])}
+  <div class="card__foot">{chips(project['stack'])}</div>
 </article>""")
 
     return f"""<section class="block" id="work">
@@ -267,8 +267,10 @@ def projects_section() -> str:
   <p class="project__tagline">{esc(project['tagline'])}</p>
   <p class="card__body">{esc(project['summary'])}</p>
   <p class="project__why">{esc(project['why'])}</p>
-  {chips(project['stack'])}
-  <div class="project__links">{''.join(links)}</div>
+  <div class="project__foot">
+    {chips(project['stack'])}
+    <div class="project__links">{''.join(links)}</div>
+  </div>
 </article>""")
 
     return f"""<section class="block" id="projects">
