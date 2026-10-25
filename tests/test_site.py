@@ -173,3 +173,68 @@ def test_no_claim_of_ai_credit_where_none_exists(built: Path):
         lowered = page.read_text(encoding="utf-8").lower()
         for word in hype:
             assert word not in lowered, f"{page.name} contains hype: {word}"
+
+
+# --------------------------------------------------------------- the layout
+
+
+def test_grid_columns_cannot_overflow_their_container(built: Path):
+    """
+    A bare `minmax(300px, 1fr)` is wider than the container on a 320px phone,
+    which produces a horizontal scrollbar. The minimum has to be able to shrink.
+    """
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+
+    assert "minmax(var(--col), 1fr)" in css
+    assert "minmax(var(--col-tight), 1fr)" in css
+    assert "minmax(300px, 1fr)" not in css, "fixed 300px minimum would overflow on a phone"
+    assert "minmax(240px, 1fr)" not in css, "fixed 240px minimum would overflow on a phone"
+    assert "min(300px, 100%)" in css, "the column minimum must be able to shrink"
+
+
+def test_card_footers_align_to_the_bottom(built: Path):
+    """Cards in a row must line up along their bottom edge, not their content."""
+    index = (built / "index.html").read_text(encoding="utf-8")
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+
+    assert 'class="project__foot"' in index, "project chips and links need a shared footer"
+    assert 'class="card__foot"' in index, "work cards need a footer"
+    assert ".project__foot,\n.card__foot {\n  margin-top: auto;" in css
+    assert ".note__more {\n  margin-top: auto;" in css
+
+
+def test_the_nav_switches_before_it_can_overflow(built: Path):
+    """
+    Eight links plus a button stop fitting on one line somewhere around 1000px.
+    The panel has to take over above that, or the header row overflows.
+    """
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+    assert "@media (max-width: 1020px)" in css
+    assert ".nav__toggle { display: grid; }" in css
+
+
+def test_has_breakpoints_across_the_common_widths(built: Path):
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+    for width in (1440, 1020, 900, 720, 560, 400):
+        assert f"max-width: {width}px" in css or f"min-width: {width}px" in css, (
+            f"no breakpoint at {width}px"
+        )
+
+
+def test_page_does_not_scroll_sideways(built: Path):
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+    assert "overflow-x: clip" in css
+    assert "overflow-x: hidden" in css  # the fallback for older browsers
+
+
+def test_long_chips_can_wrap(built: Path):
+    """
+    One skill entry is 50 characters ("Functions (Blob, Queue, Service Bus,
+    Cosmos, Timer)"). It has to wrap inside its chip rather than force the card
+    wider than its column.
+    """
+    css = (ROOT / "site" / "static" / "style.css").read_text(encoding="utf-8")
+    chip_rule = css.split(".chip {")[1].split("}")[0]
+
+    assert "overflow-wrap: anywhere" in chip_rule
+    assert "nowrap" not in chip_rule, "a chip that cannot wrap can overflow its card"
