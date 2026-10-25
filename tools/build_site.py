@@ -85,7 +85,7 @@ def page(
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}">
 <meta name="author" content="{esc(PROFILE['name'])}">
-<meta name="theme-color" content="#faf7f2">
+<meta name="theme-color" content="#08090c">
 <link rel="canonical" href="{esc(PROFILE['github'].replace('github.com/vishnuu12', 'vishnuu12.github.io/portfolio'))}/">
 <link rel="icon" href="{p}favicon.svg" type="image/svg+xml">
 
@@ -162,7 +162,7 @@ def hero(depth: int) -> str:
       <span class="hero__status"><i></i> Open to interesting work &middot; {esc(PROFILE['location'])}</span>
       <h1 class="hero__name">{esc(PROFILE['name'])}</h1>
       <p class="hero__role">
-        <span>{esc(PROFILE['title'])}</span>
+        <span class="grad-text">{esc(PROFILE['title'])}</span>
         <span> &middot; {esc(PROFILE['subtitle'])}</span>
       </p>
       <p class="hero__pitch">{esc(PROFILE['pitch'])}</p>
