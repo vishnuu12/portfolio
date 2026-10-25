@@ -3,7 +3,8 @@
    One stylesheet, no framework, no web fonts.
 
    Cinematic direction: near-black ground, warm off-white type, a single
-   restrained burgundy accent, and an editorial serif for the display moments.
+   restrained brass accent, a deep wine for depth, and an editorial serif for the
+   display moments.
    No gradients doing the work, no glassmorphism, no clutter - the restraint is
    the point.
    ========================================================================== */
@@ -11,22 +12,30 @@
 /* ---------------------------------------------------------------- tokens */
 
 :root {
-  --bg: #050505;
-  --bg-soft: #0a0a0b;
+  --bg: #070708;
+  --bg-soft: #0b0b0d;
   --surface: #0d0d0f;
   --surface-2: #141416;
 
   --line: rgba(245, 242, 238, 0.09);
   --line-strong: rgba(245, 242, 238, 0.2);
 
-  --ink: #f5f2ee;
-  --ink-soft: #a8a29c;
-  --ink-dim: #6f6a66;
+  --ink: #f4efe7;
+  --ink-soft: #a8a29a;
+  --ink-dim: #857f75;      /* 5.1:1 - the old #6d6862 was 3.7:1, too dim for an 11px label */
 
-  --burgundy: #7a1734;
-  --burgundy-lit: #b8446a;
-  --burgundy-deep: #4a0f20;
-  --gold: #c8a24a;
+  /* Two warm accents, with DIFFERENT JOBS - this is the distinction that was
+     wrong before.
+
+       A FILL may be dark. White text on --wine is 9:1, so buttons and the
+       portrait tint are fine in it.
+
+       TEXT may not. Burgundy on near-black is 3.9:1, which is why every
+       eyebrow, link and company name looked muddy. --accent is the text
+       colour, and tests/test_site.py fails the build if it drops below 4.5:1. */
+  --wine: #5c1024;         /* fills, rules, glows - never text */
+  --accent: #d9a441;       /* brass: 8.9:1 on the page, 8.6:1 on a card */
+  --accent-soft: #e3c07b;  /* hover, and the one or two places that should glow */
 
   --radius: 4px;
   --radius-sm: 3px;
@@ -76,15 +85,15 @@ body {
 img { max-width: 100%; display: block; }
 
 a { color: var(--ink); text-decoration: none; }
-a:hover { color: var(--burgundy-lit); }
+a:hover { color: var(--accent-soft); }
 
 :focus-visible {
-  outline: 2px solid var(--burgundy-lit);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-::selection { background: rgba(122, 23, 52, 0.55); color: #fff; }
+::selection { background: rgba(217, 164, 65, 0.32); color: var(--ink); }
 
 ::-webkit-scrollbar { width: 11px; height: 11px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -93,7 +102,7 @@ a:hover { color: var(--burgundy-lit); }
   border-radius: 99px;
   border: 3px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--burgundy); }
+::-webkit-scrollbar-thumb:hover { background: var(--wine); }
 
 /* ------------------------------------------------------------- typography */
 
@@ -126,7 +135,7 @@ p:last-child { margin-bottom: 0; }
   font-size: 0.7rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--burgundy-lit);
+  color: var(--accent);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -136,7 +145,7 @@ p:last-child { margin-bottom: 0; }
   content: "";
   width: 30px;
   height: 1px;
-  background: var(--burgundy);
+  background: var(--wine);
 }
 
 .section__title {
@@ -177,7 +186,7 @@ section.block {
   border-bottom: 1px solid transparent;
 }
 .nav.is-stuck {
-  background: rgba(5, 5, 5, 0.88);
+  background: rgba(7, 7, 8, 0.88);
   backdrop-filter: saturate(140%) blur(10px);
   -webkit-backdrop-filter: saturate(140%) blur(10px);
   border-bottom-color: var(--line);
@@ -207,7 +216,7 @@ section.block {
   width: 30px;
   height: 30px;
   border-radius: 2px;
-  background: var(--burgundy);
+  background: var(--wine);
   display: grid;
   place-items: center;
   font-family: var(--mono);
@@ -237,12 +246,12 @@ section.block {
 .nav__cta {
   font-size: 0.8rem !important;
   color: #f7ede9 !important;
-  background: var(--burgundy);
+  background: var(--wine);
   letter-spacing: 0.02em;
   padding: 0.5rem 1.05rem !important;
   border-radius: 2px;
 }
-.nav__cta:hover { background: var(--burgundy-lit) !important; }
+.nav__cta:hover { background: var(--accent) !important; }
 
 .nav__toggle {
   display: none;
@@ -271,7 +280,7 @@ section.block {
   overflow: hidden;
 }
 
-/* One soft burgundy light behind the subject, and a vignette. That is the whole
+/* One soft wine light behind the subject, and a vignette. That is the whole
    of the "cinematic" treatment - no gradients across the type. */
 .hero__glow {
   position: absolute;
@@ -290,7 +299,7 @@ section.block {
   border-radius: 50%;
   top: -6%;
   right: -6%;
-  background: radial-gradient(circle, rgba(122, 23, 52, 0.55), transparent 66%);
+  background: radial-gradient(circle, rgba(92, 16, 36, 0.72), transparent 66%);
   filter: blur(80px);
   animation: drift 26s var(--ease) infinite alternate;
 }
@@ -331,8 +340,8 @@ section.block {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 0 3px rgba(200, 162, 74, 0.16);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.18);
   animation: pulse 2.6s ease-in-out infinite;
 }
 @keyframes pulse {
@@ -352,7 +361,7 @@ section.block {
   font-size: clamp(0.78rem, 1.6vw, 0.92rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--burgundy-lit);
+  color: var(--accent);
   margin-bottom: 1.8rem;
 }
 .hero__role span:last-child { color: var(--ink-dim); }
@@ -392,11 +401,11 @@ section.block {
   color: var(--ink);
 }
 .btn--primary {
-  background: var(--burgundy);
-  border-color: var(--burgundy);
+  background: var(--wine);
+  border-color: var(--wine);
   color: #f7ede9;
 }
-.btn--primary:hover { background: var(--burgundy-lit); border-color: var(--burgundy-lit); color: #fff; }
+.btn--primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 .hero__stats {
   display: grid;
@@ -442,7 +451,7 @@ section.block {
   position: absolute;
   inset: 0;
   border-radius: 2px;
-  background: linear-gradient(160deg, rgba(122, 23, 52, 0.34), rgba(5, 5, 5, 0.5) 70%);
+  background: linear-gradient(160deg, rgba(92, 16, 36, 0.42), rgba(5, 5, 5, 0.5) 70%);
   mix-blend-mode: screen;
   z-index: 2;
 }
@@ -531,7 +540,7 @@ section.block {
   top: 0.7em;
   width: 6px;
   height: 1px;
-  background: var(--burgundy-lit);
+  background: var(--accent);
 }
 
 /* ---------------------------------------------------------------- timeline */
@@ -544,7 +553,7 @@ section.block {
   top: 10px;
   bottom: 10px;
   width: 1px;
-  background: linear-gradient(180deg, var(--burgundy), rgba(122, 23, 52, 0.05));
+  background: linear-gradient(180deg, var(--accent), rgba(217, 164, 65, 0.05));
 }
 
 .job { position: relative; padding-bottom: 2.6rem; }
@@ -561,9 +570,9 @@ section.block {
   border: 1px solid var(--line-strong);
 }
 .job.is-current::before {
-  background: var(--burgundy-lit);
-  border-color: var(--burgundy-lit);
-  box-shadow: 0 0 0 4px rgba(122, 23, 52, 0.28);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(217, 164, 65, 0.22);
 }
 
 .job__head {
@@ -574,7 +583,7 @@ section.block {
   margin-bottom: 0.3rem;
 }
 .job__role { font-size: 1.04rem; font-weight: 600; }
-.job__company { color: var(--burgundy-lit); font-size: 0.94rem; }
+.job__company { color: var(--accent); font-size: 0.94rem; }
 .job__period {
   font-family: var(--mono);
   font-size: 0.73rem;
@@ -590,7 +599,7 @@ section.block {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.4rem 0.9rem;
-  border-left: 2px solid var(--burgundy);
+  border-left: 2px solid var(--wine);
   padding: 0.3rem 0 0.3rem 1.2rem;
   margin-top: 2.4rem;
 }
@@ -617,14 +626,14 @@ section.block {
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--burgundy-lit);
+  color: var(--accent);
   margin-bottom: 0.85rem;
 }
 .project__why {
   font-family: var(--serif);
   font-size: 0.98rem;
   color: var(--ink);
-  border-left: 1px solid var(--burgundy);
+  border-left: 1px solid var(--wine);
   padding-left: 0.9rem;
   margin-top: 1.1rem;
   opacity: 0.9;
@@ -655,7 +664,7 @@ section.block {
   color: var(--ink-soft);
   border-bottom: 1px solid transparent;
 }
-.project__links a:hover { color: var(--burgundy-lit); border-bottom-color: var(--burgundy-lit); }
+.project__links a:hover { color: var(--accent-soft); border-bottom-color: var(--accent-soft); }
 .project__links a::after { content: "\2197"; font-size: 0.85em; opacity: 0.65; }
 
 /* ---------------------------------------------------------------- skills */
@@ -691,8 +700,8 @@ section.block {
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--gold);
-  border: 1px solid rgba(200, 162, 74, 0.3);
+  color: var(--accent);
+  border: 1px solid rgba(217, 164, 65, 0.32);
   border-radius: 2px;
   padding: 0.2rem 0.6rem;
 }
@@ -735,7 +744,7 @@ section.block {
   font-family: var(--mono);
   font-size: 0.74rem;
   letter-spacing: 0.05em;
-  color: var(--burgundy-lit);
+  color: var(--accent);
 }
 
 /* --------------------------------------------------------------- contact */
@@ -744,7 +753,7 @@ section.block {
   position: relative;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(150deg, rgba(122, 23, 52, 0.16), rgba(5, 5, 5, 0) 60%);
+  background: linear-gradient(150deg, rgba(92, 16, 36, 0.3), rgba(5, 5, 5, 0) 60%);
   padding: clamp(1.9rem, 5vw, 3.2rem);
   overflow: hidden;
 }
@@ -802,7 +811,7 @@ section.block {
   cursor: pointer;
 }
 .copybtn:hover { color: var(--ink); border-color: var(--line-strong); }
-.copybtn.is-done { color: var(--gold); border-color: rgba(200, 162, 74, 0.4); }
+.copybtn.is-done { color: var(--accent); border-color: rgba(217, 164, 65, 0.45); }
 
 /* ---------------------------------------------------------------- footer */
 
@@ -857,7 +866,7 @@ section.block {
   font-family: var(--serif);
   margin: 2rem 0;
   padding: 0.2rem 0 0.2rem 1.3rem;
-  border-left: 2px solid var(--burgundy);
+  border-left: 2px solid var(--wine);
   color: var(--ink);
   font-size: 1.16rem;
   line-height: 1.5;
@@ -867,7 +876,7 @@ section.block {
   padding: 1.2rem 1.3rem;
   background: #0a0a0b;
   border: 1px solid var(--line);
-  border-left: 2px solid var(--burgundy);
+  border-left: 2px solid var(--wine);
   border-radius: 2px;
   overflow-x: auto;
 }
