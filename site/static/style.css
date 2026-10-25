@@ -2,35 +2,37 @@
    Vishnu S - portfolio
    One stylesheet, no framework, no web fonts.
 
-   Light and warm: paper ground, white cards, near-black type, and a single
-   navy accent. The rule that matters is written down in the tokens below -
-   a colour that is a FILL and a colour that is TEXT are different jobs, and
-   tests/test_site.py fails the build if any text colour drops below 4.5:1.
+   Dark, and built on the violet -> cyan identity the site started with. The
+   one thing that had to change: the accent used for TEXT has to be a light
+   violet, not the dark one. #6d28d9 on near-black is 2.8:1 - unreadable at
+   11px, which is what every eyebrow and link was set in. #a99bff is 8.4:1.
+   tests/test_site.py fails the build if that slips again.
    ========================================================================== */
 
 /* ---------------------------------------------------------------- tokens */
 
 :root {
-  /* Warm paper, not grey-white. The whole palette is warm - nothing is blue. */
-  --bg: #faf7f2;
-  --bg-soft: #f4f0e9;
-  --surface: #ffffff;
-  --surface-2: #fbf9f5;
+  --bg: #08090c;
+  --bg-soft: #0d0e13;
+  --surface: #101218;
+  --surface-2: #16181f;
 
-  --line: rgba(23, 21, 15, 0.1);
-  --line-strong: rgba(23, 21, 15, 0.22);
+  --line: rgba(232, 235, 242, 0.09);
+  --line-strong: rgba(232, 235, 242, 0.2);
 
-  --ink: #17150f;         /* 17.1:1 on paper */
-  --ink-soft: #5f5951;    /*  6.5:1 */
-  --ink-dim: #726c63;     /*  4.9:1 - still readable at 11px */
+  --ink: #e8ebf2;         /* 16.7:1 on the ground */
+  --ink-soft: #9aa3b4;    /*  7.8:1 */
+  --ink-dim: #7b8393;     /*  5.0:1 - still readable at 11px */
 
-  /* One accent, doing both jobs - and it works here because the ground is
-     light. A dark red on near-black measured 3.9:1 and looked muddy; navy on
-     warm paper measures 10.8:1. Cream and navy is the old pairing for a
-     reason. */
-  --accent: #1c3a5e;      /* 10.8:1 on paper, 11.6:1 on a card */
-  --accent-deep: #142c48; /* 13.3:1 - hover */
-  --accent-tint: rgba(28, 58, 94, 0.08);
+  /* The identity, as two hexes so a test can measure them. */
+  --violet: #8b7bff;
+  --cyan: #22d3ee;
+  --grad: linear-gradient(100deg, var(--violet) 0%, var(--cyan) 100%);
+
+  /* The TEXT accent is the light violet. The dark one is a FILL only. */
+  --accent: #a99bff;      /*  8.4:1 on the ground, 7.9:1 on a card */
+  --accent-deep: #c9c0ff; /* 12.2:1 - hover */
+  --accent-tint: rgba(139, 123, 255, 0.14);
 
   --radius: 6px;
   --radius-sm: 4px;
@@ -41,11 +43,11 @@
   --col: min(300px, 100%);
   --col-tight: min(240px, 100%);
 
-  /* Light themes live on shadows, not glows. Two layers: a hairline for the
-     edge, a wide soft one for the lift. */
-  --shadow-sm: 0 1px 2px rgba(23, 21, 15, 0.05);
-  --shadow: 0 1px 2px rgba(23, 21, 15, 0.05), 0 14px 34px -22px rgba(23, 21, 15, 0.28);
-  --shadow-lg: 0 2px 4px rgba(23, 21, 15, 0.05), 0 26px 60px -30px rgba(23, 21, 15, 0.35);
+  /* Dark themes live on glow, not shadow. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -24px rgba(0, 0, 0, 0.9);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.45), 0 30px 70px -32px rgba(0, 0, 0, 1);
+  --glow: 0 0 0 1px rgba(139, 123, 255, 0.3), 0 20px 50px -26px rgba(139, 123, 255, 0.55);
 
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -84,7 +86,7 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-deep); }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--cyan);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -92,13 +94,13 @@ a:hover { color: var(--accent-deep); }
 ::selection { background: var(--accent-tint); color: var(--ink); }
 
 ::-webkit-scrollbar { width: 12px; height: 12px; }
-::-webkit-scrollbar-track { background: var(--bg-soft); }
+::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb {
-  background: #d8d1c6;
+  background: #23262f;
   border-radius: 99px;
-  border: 3px solid var(--bg-soft);
+  border: 3px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-thumb:hover { background: var(--violet); }
 
 /* ------------------------------------------------------------- typography */
 
@@ -124,6 +126,13 @@ p:last-child { margin-bottom: 0; }
   letter-spacing: -0.015em;
 }
 
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .eyebrow {
   font-family: var(--mono);
   font-size: 0.7rem;
@@ -139,7 +148,7 @@ p:last-child { margin-bottom: 0; }
   content: "";
   width: 30px;
   height: 1px;
-  background: var(--accent);
+  background: var(--grad);
 }
 
 .section__title {
@@ -176,16 +185,14 @@ section.block {
   left: 0;
   right: 0;
   z-index: 60;
-  transition: background 0.4s var(--ease), border-color 0.4s var(--ease),
-    box-shadow 0.4s var(--ease);
+  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
   border-bottom: 1px solid transparent;
 }
 .nav.is-stuck {
-  background: rgba(250, 247, 242, 0.86);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  background: rgba(8, 9, 12, 0.82);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
   border-bottom-color: var(--line);
-  box-shadow: 0 1px 24px -12px rgba(23, 21, 15, 0.18);
 }
 
 .nav__inner {
@@ -214,13 +221,13 @@ section.block {
   width: 30px;
   height: 30px;
   border-radius: 3px;
-  background: var(--accent);
+  background: var(--grad);
   display: grid;
   place-items: center;
   font-family: var(--mono);
   font-size: 0.7rem;
   letter-spacing: 0.04em;
-  color: #ffffff;
+  color: #08090c;
 }
 
 .nav__links {
@@ -238,18 +245,19 @@ section.block {
   white-space: nowrap;
   transition: color 0.2s, background 0.2s;
 }
-.nav__links a:hover { color: var(--ink); background: var(--bg-soft); }
-.nav__links a.is-active { color: var(--ink); background: var(--bg-soft); }
+.nav__links a:hover { color: var(--ink); background: rgba(232, 235, 242, 0.06); }
+.nav__links a.is-active { color: var(--ink); background: rgba(232, 235, 242, 0.08); }
 
 .nav__cta {
   font-size: 0.8rem !important;
-  color: #ffffff !important;
-  background: var(--accent);
+  color: #08090c !important;
+  background: var(--grad);
+  font-weight: 600;
   letter-spacing: 0.02em;
   padding: 0.5rem 1.05rem !important;
   border-radius: var(--radius-sm);
 }
-.nav__cta:hover { background: var(--accent-deep) !important; }
+.nav__cta:hover { filter: brightness(1.1); background: var(--grad) !important; }
 
 .nav__toggle {
   display: none;
@@ -257,7 +265,7 @@ section.block {
   height: 38px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
-  background: var(--surface);
+  background: rgba(232, 235, 242, 0.04);
   color: var(--ink);
   cursor: pointer;
   place-items: center;
@@ -278,8 +286,9 @@ section.block {
   overflow: hidden;
 }
 
-/* A blush halo and a warm wash. On paper, "atmosphere" is a tint - a light
-   would just look like a stain. */
+/* The two lights that carry the identity: violet and cyan, blurred, behind the
+   copy. This is the "bold" part - and it is the only place colour is allowed to
+   be soft, because nothing has to be read on top of it. */
 .hero__glow {
   position: absolute;
   inset: -40% -20% auto -20%;
@@ -290,27 +299,35 @@ section.block {
 .hero__glow::before {
   content: "";
   position: absolute;
-  width: 46vw;
-  height: 46vw;
-  min-width: 320px;
-  min-height: 320px;
+  width: 48vw;
+  height: 48vw;
+  min-width: 330px;
+  min-height: 330px;
   border-radius: 50%;
-  top: -4%;
-  right: -4%;
-  background: radial-gradient(circle, rgba(28, 58, 94, 0.1), transparent 62%);
-  filter: blur(70px);
+  top: -8%;
+  right: -2%;
+  background: radial-gradient(circle, rgba(139, 123, 255, 0.5), transparent 64%);
+  filter: blur(85px);
   animation: drift 26s var(--ease) infinite alternate;
 }
 .hero__glow::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 70% 55% at 18% 8%, rgba(200, 162, 74, 0.09), transparent 68%);
+  width: 38vw;
+  height: 38vw;
+  min-width: 260px;
+  min-height: 260px;
+  border-radius: 50%;
+  top: 22%;
+  left: 4%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.32), transparent 64%);
+  filter: blur(85px);
+  animation: drift 30s var(--ease) infinite alternate-reverse;
 }
 
 @keyframes drift {
   from { transform: translate3d(0, 0, 0) scale(1); }
-  to { transform: translate3d(-4%, 4%, 0) scale(1.1); }
+  to { transform: translate3d(-4%, 5%, 0) scale(1.12); }
 }
 
 .hero__grid {
@@ -330,18 +347,17 @@ section.block {
   text-transform: uppercase;
   color: var(--ink-soft);
   border: 1px solid var(--line);
-  background: var(--surface);
+  background: rgba(232, 235, 242, 0.03);
   border-radius: var(--radius-pill);
   padding: 0.42rem 0.9rem;
   margin-bottom: 2rem;
-  box-shadow: var(--shadow-sm);
 }
 .hero__status i {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-tint);
+  background: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.18);
   animation: pulse 2.6s ease-in-out infinite;
 }
 @keyframes pulse {
@@ -390,30 +406,26 @@ section.block {
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   color: var(--ink);
-  background: var(--surface);
+  background: rgba(232, 235, 242, 0.03);
   cursor: pointer;
   font-family: inherit;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.25s var(--ease), box-shadow 0.25s, border-color 0.25s,
-    background 0.25s;
+  transition: transform 0.25s var(--ease), border-color 0.25s, background 0.25s,
+    box-shadow 0.25s;
 }
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  background: rgba(232, 235, 242, 0.08);
   border-color: var(--ink-dim);
   color: var(--ink);
 }
+/* Dark text on the gradient: readable at every point along it, unlike white. */
 .btn--primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #ffffff;
-  box-shadow: 0 1px 2px rgba(28, 58, 94, 0.2), 0 14px 30px -18px rgba(28, 58, 94, 0.6);
+  background: var(--grad);
+  border-color: transparent;
+  color: #08090c;
+  font-weight: 600;
 }
-.btn--primary:hover {
-  background: var(--accent-deep);
-  border-color: var(--accent-deep);
-  color: #ffffff;
-}
+.btn--primary:hover { filter: brightness(1.08); color: #08090c; }
 
 .hero__stats {
   display: grid;
@@ -426,8 +438,11 @@ section.block {
 .stat__value {
   font-family: var(--serif);
   font-size: 1.8rem;
-  color: var(--ink);
   line-height: 1.15;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .stat__label {
   font-size: 0.74rem;
@@ -449,9 +464,9 @@ section.block {
   place-items: center;
   position: relative;
   border-radius: var(--radius);
-  background: linear-gradient(155deg, var(--surface) 0%, var(--bg-soft) 100%);
+  background: linear-gradient(155deg, var(--surface-2) 0%, var(--bg-soft) 100%);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), var(--glow);
   overflow: hidden;
 }
 .monogram::before {
@@ -465,8 +480,11 @@ section.block {
   font-family: var(--serif);
   font-size: clamp(2.8rem, 7vw, 4.6rem);
   letter-spacing: -0.04em;
-  color: var(--accent);
   line-height: 1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .monogram::after {
   content: "";
@@ -475,7 +493,7 @@ section.block {
   bottom: 0;
   width: 46px;
   height: 3px;
-  background: var(--accent);
+  background: var(--grad);
 }
 
 /* ---------------------------------------------------------------- cards */
@@ -489,13 +507,12 @@ section.block {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.6rem;
-  box-shadow: var(--shadow-sm);
   transition: transform 0.4s var(--ease), border-color 0.4s, box-shadow 0.4s;
 }
 .card:hover {
   transform: translateY(-3px);
-  border-color: rgba(28, 58, 94, 0.3);
-  box-shadow: var(--shadow-lg);
+  border-color: rgba(139, 123, 255, 0.45);
+  box-shadow: var(--shadow-lg), 0 0 40px -18px rgba(139, 123, 255, 0.6);
 }
 
 .card__title {
@@ -520,7 +537,7 @@ section.block {
   font-size: 0.68rem;
   letter-spacing: 0.02em;
   color: var(--ink-soft);
-  background: var(--bg-soft);
+  background: rgba(232, 235, 242, 0.05);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 0.24rem 0.52rem;
@@ -553,7 +570,7 @@ section.block {
   top: 0.72em;
   width: 7px;
   height: 2px;
-  background: var(--accent);
+  background: var(--grad);
 }
 
 /* ---------------------------------------------------------------- timeline */
@@ -566,7 +583,7 @@ section.block {
   top: 10px;
   bottom: 10px;
   width: 1px;
-  background: linear-gradient(180deg, var(--accent), var(--accent-tint));
+  background: linear-gradient(180deg, var(--violet), rgba(34, 211, 238, 0.15));
 }
 
 .job { position: relative; padding-bottom: 2.6rem; }
@@ -583,9 +600,9 @@ section.block {
   border: 1px solid var(--line-strong);
 }
 .job.is-current::before {
-  background: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-tint);
+  background: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.18);
 }
 
 .job__head {
@@ -612,12 +629,11 @@ section.block {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.4rem 0.9rem;
-  border-left: 2px solid var(--accent);
+  border-left: 2px solid var(--violet);
   background: var(--surface);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   padding: 1rem 1.2rem;
   margin-top: 2.4rem;
-  box-shadow: var(--shadow-sm);
 }
 .edu__period { font-family: var(--mono); font-size: 0.73rem; color: var(--ink-dim); margin-left: auto; }
 
@@ -642,7 +658,7 @@ section.block {
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--cyan);
   margin-bottom: 0.85rem;
 }
 .project__why {
@@ -716,8 +732,8 @@ section.block {
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-tint);
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.1);
   border-radius: var(--radius-pill);
   padding: 0.24rem 0.7rem;
 }
@@ -735,13 +751,12 @@ section.block {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.5rem 1.6rem;
-  box-shadow: var(--shadow-sm);
   transition: transform 0.35s var(--ease), border-color 0.35s, box-shadow 0.35s;
 }
 .note:hover {
   transform: translateY(-3px);
-  border-color: rgba(28, 58, 94, 0.3);
-  box-shadow: var(--shadow-lg);
+  border-color: rgba(139, 123, 255, 0.45);
+  box-shadow: var(--shadow-lg), 0 0 40px -18px rgba(139, 123, 255, 0.6);
 }
 .note__meta {
   font-family: var(--mono);
@@ -770,8 +785,7 @@ section.block {
   position: relative;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(150deg, var(--surface) 0%, #f4f6f9 100%);
-  box-shadow: var(--shadow);
+  background: linear-gradient(150deg, rgba(139, 123, 255, 0.14) 0%, rgba(8, 9, 12, 0) 62%);
   padding: clamp(1.9rem, 5vw, 3.2rem);
   overflow: hidden;
 }
@@ -790,17 +804,20 @@ section.block {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--surface);
+  background: var(--surface-2);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  box-shadow: var(--glow);
   flex: 0 0 auto;
 }
 .contact__monogram span {
   font-family: var(--serif);
   font-size: clamp(1.6rem, 4vw, 2.3rem);
   letter-spacing: -0.04em;
-  color: var(--accent);
   line-height: 1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .emailrow {
@@ -814,7 +831,7 @@ section.block {
   font-family: var(--mono);
   font-size: 0.88rem;
   color: var(--ink);
-  background: var(--surface);
+  background: rgba(8, 9, 12, 0.55);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   padding: 0.65rem 1.1rem;
@@ -825,14 +842,14 @@ section.block {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
+  background: rgba(232, 235, 242, 0.05);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 0.68rem 0.95rem;
   cursor: pointer;
 }
-.copybtn:hover { color: var(--ink); border-color: var(--ink-dim); }
-.copybtn.is-done { color: var(--accent); border-color: var(--accent); }
+.copybtn:hover { color: var(--ink); border-color: var(--line-strong); }
+.copybtn.is-done { color: var(--cyan); border-color: rgba(34, 211, 238, 0.45); }
 
 /* ---------------------------------------------------------------- footer */
 
@@ -888,26 +905,24 @@ section.block {
   font-family: var(--serif);
   margin: 2rem 0;
   padding: 0.2rem 0 0.2rem 1.3rem;
-  border-left: 2px solid var(--accent);
+  border-left: 2px solid var(--violet);
   color: var(--ink);
   font-size: 1.16rem;
   line-height: 1.5;
 }
-/* Code stays dark on the light page. It is the one place the palette inverts,
-   and the contrast is the point - it reads as a distinct surface. */
 .article pre {
   margin: 1.6rem 0;
   padding: 1.2rem 1.3rem;
-  background: #17150f;
-  border: 1px solid #17150f;
-  border-left: 3px solid var(--accent);
+  background: #050609;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--violet);
   border-radius: var(--radius-sm);
   overflow-x: auto;
 }
 .article code {
   font-family: var(--mono);
   font-size: 0.82rem;
-  color: #efe7dd;
+  color: #dfe4ee;
   line-height: 1.65;
 }
 .article__back {
@@ -929,7 +944,7 @@ section.block {
   position: absolute;
   left: -9999px;
   top: 0;
-  background: var(--surface);
+  background: var(--surface-2);
   color: var(--ink);
   padding: 0.7rem 1.1rem;
   z-index: 100;
@@ -948,7 +963,7 @@ section.block {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
-  .hero__glow::before { animation: none; }
+  .hero__glow::before, .hero__glow::after { animation: none; }
   .hero__status i { animation: none; }
   * { transition-duration: 0.01ms !important; }
 }
@@ -978,7 +993,7 @@ section.block {
     flex-direction: column;
     align-items: stretch;
     gap: 0.1rem;
-    background: var(--surface);
+    background: rgba(16, 18, 24, 0.98);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 0.6rem;
