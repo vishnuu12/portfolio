@@ -1,0 +1,12 @@
+# Build output. The resume and the site are generated, not committed - the
+# deploy workflow rebuilds them from content/ so they can never go stale.
+dist/
+resume.pdf
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
+.idea/
+.vscode/
