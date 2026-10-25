@@ -85,7 +85,7 @@ def page(
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}">
 <meta name="author" content="{esc(PROFILE['name'])}">
-<meta name="theme-color" content="#050505">
+<meta name="theme-color" content="#faf7f2">
 <link rel="canonical" href="{esc(PROFILE['github'].replace('github.com/vishnuu12', 'vishnuu12.github.io/portfolio'))}/">
 <link rel="icon" href="{p}favicon.svg" type="image/svg+xml">
 
@@ -173,8 +173,8 @@ def hero(depth: int) -> str:
       </div>
       <div class="hero__stats">{stats}</div>
     </div>
-    <div class="portrait">
-      <img src="{esc(PROFILE['avatar'])}" alt="{esc(PROFILE['name'])}" width="260" height="260" loading="eager">
+    <div class="monogram" role="img" aria-label="{esc(PROFILE['name'])}">
+      <span>VS</span>
     </div>
   </div>
 </section>"""
@@ -369,9 +369,7 @@ def contact_section() -> str:
             <a class="btn" href="{esc(PROFILE['resume'])}" download>Download resume</a>
           </div>
         </div>
-        <div class="contact__portrait">
-          <img src="{esc(PROFILE['avatar'])}" alt="" width="170" height="170" loading="lazy">
-        </div>
+        <div class="contact__monogram" aria-hidden="true"><span>VS</span></div>
       </div>
     </div>
   </div>
