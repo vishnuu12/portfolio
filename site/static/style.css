@@ -2,52 +2,48 @@
    Vishnu S - portfolio
    One stylesheet, no framework, no web fonts.
 
-   Cinematic direction: near-black ground, warm off-white type, a single
-   restrained brass accent, a deep wine for depth, and an editorial serif for the
-   display moments.
-   No gradients doing the work, no glassmorphism, no clutter - the restraint is
-   the point.
+   Light and warm: paper ground, white cards, near-black type, and a single
+   oxblood accent. The rule that matters is written down in the tokens below -
+   a colour that is a FILL and a colour that is TEXT are different jobs, and
+   tests/test_site.py fails the build if any text colour drops below 4.5:1.
    ========================================================================== */
 
 /* ---------------------------------------------------------------- tokens */
 
 :root {
-  --bg: #070708;
-  --bg-soft: #0b0b0d;
-  --surface: #0d0d0f;
-  --surface-2: #141416;
+  /* Warm paper, not grey-white. The whole palette is warm - nothing is blue. */
+  --bg: #faf7f2;
+  --bg-soft: #f4f0e9;
+  --surface: #ffffff;
+  --surface-2: #fbf9f5;
 
-  --line: rgba(245, 242, 238, 0.09);
-  --line-strong: rgba(245, 242, 238, 0.2);
+  --line: rgba(23, 21, 15, 0.1);
+  --line-strong: rgba(23, 21, 15, 0.22);
 
-  --ink: #f4efe7;
-  --ink-soft: #a8a29a;
-  --ink-dim: #857f75;      /* 5.1:1 - the old #6d6862 was 3.7:1, too dim for an 11px label */
+  --ink: #17150f;         /* 17.1:1 on paper */
+  --ink-soft: #5f5951;    /*  6.5:1 */
+  --ink-dim: #726c63;     /*  4.9:1 - still readable at 11px */
 
-  /* Two warm accents, with DIFFERENT JOBS - this is the distinction that was
-     wrong before.
+  /* One accent, doing both jobs - and it works here because the ground is
+     light. The same oxblood on near-black measured 3.9:1 and looked muddy. */
+  --accent: #8a1c3a;      /* 8.5:1 on paper, 9.1:1 on a card */
+  --accent-deep: #6f1430; /* 10.8:1 - hover */
+  --accent-tint: rgba(138, 28, 58, 0.08);
 
-       A FILL may be dark. White text on --wine is 9:1, so buttons and the
-       portrait tint are fine in it.
-
-       TEXT may not. Burgundy on near-black is 3.9:1, which is why every
-       eyebrow, link and company name looked muddy. --accent is the text
-       colour, and tests/test_site.py fails the build if it drops below 4.5:1. */
-  --wine: #5c1024;         /* fills, rules, glows - never text */
-  --accent: #d9a441;       /* brass: 8.9:1 on the page, 8.6:1 on a card */
-  --accent-soft: #e3c07b;  /* hover, and the one or two places that should glow */
-
-  --radius: 4px;
-  --radius-sm: 3px;
+  --radius: 6px;
+  --radius-sm: 4px;
   --radius-pill: 999px;
 
   --maxw: 1120px;
   --gutter: clamp(1.15rem, 4vw, 2.5rem);
-  /* Fluid column minimums. The `min(..., 100%)` is the load-bearing part: a bare
-     300px minimum is wider than the container on a 320px phone, which produces a
-     horizontal scrollbar and a page that looks broken. */
   --col: min(300px, 100%);
   --col-tight: min(240px, 100%);
+
+  /* Light themes live on shadows, not glows. Two layers: a hairline for the
+     edge, a wide soft one for the lift. */
+  --shadow-sm: 0 1px 2px rgba(23, 21, 15, 0.05);
+  --shadow: 0 1px 2px rgba(23, 21, 15, 0.05), 0 14px 34px -22px rgba(23, 21, 15, 0.28);
+  --shadow-lg: 0 2px 4px rgba(23, 21, 15, 0.05), 0 26px 60px -30px rgba(23, 21, 15, 0.35);
 
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -76,16 +72,14 @@ body {
   font-size: 16px;
   line-height: 1.72;
   -webkit-font-smoothing: antialiased;
-  /* clip rather than hidden: it stops the sideways scroll without turning the
-     body into a scroll container. `hidden` stays first as the fallback. */
   overflow-x: hidden;
   overflow-x: clip;
 }
 
 img { max-width: 100%; display: block; }
 
-a { color: var(--ink); text-decoration: none; }
-a:hover { color: var(--accent-soft); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-deep); }
 
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -93,16 +87,16 @@ a:hover { color: var(--accent-soft); }
   border-radius: 2px;
 }
 
-::selection { background: rgba(217, 164, 65, 0.32); color: var(--ink); }
+::selection { background: var(--accent-tint); color: var(--ink); }
 
-::-webkit-scrollbar { width: 11px; height: 11px; }
-::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg-soft); }
 ::-webkit-scrollbar-thumb {
-  background: #24211f;
+  background: #d8d1c6;
   border-radius: 99px;
-  border: 3px solid var(--bg);
+  border: 3px solid var(--bg-soft);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--wine); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 /* ------------------------------------------------------------- typography */
 
@@ -110,8 +104,6 @@ h1, h2, h3, h4 {
   margin: 0;
   font-weight: 400;
   line-height: 1.14;
-  /* Stops a heading leaving one word stranded on its own line. Ignored by
-     browsers that do not support it, which is a graceful nothing. */
   text-wrap: balance;
 }
 p { margin: 0 0 1rem; text-wrap: pretty; }
@@ -145,7 +137,7 @@ p:last-child { margin-bottom: 0; }
   content: "";
   width: 30px;
   height: 1px;
-  background: var(--wine);
+  background: var(--accent);
 }
 
 .section__title {
@@ -182,14 +174,16 @@ section.block {
   left: 0;
   right: 0;
   z-index: 60;
-  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
+  transition: background 0.4s var(--ease), border-color 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
   border-bottom: 1px solid transparent;
 }
 .nav.is-stuck {
-  background: rgba(7, 7, 8, 0.88);
-  backdrop-filter: saturate(140%) blur(10px);
-  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  background: rgba(250, 247, 242, 0.86);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom-color: var(--line);
+  box-shadow: 0 1px 24px -12px rgba(23, 21, 15, 0.18);
 }
 
 .nav__inner {
@@ -208,21 +202,23 @@ section.block {
   gap: 0.65rem;
   font-family: var(--serif);
   font-size: 1.02rem;
+  color: var(--ink);
   margin-right: auto;
   min-width: 0;
   white-space: nowrap;
 }
+.brand:hover { color: var(--ink); }
 .brand__mark {
   width: 30px;
   height: 30px;
-  border-radius: 2px;
-  background: var(--wine);
+  border-radius: 3px;
+  background: var(--accent);
   display: grid;
   place-items: center;
   font-family: var(--mono);
   font-size: 0.7rem;
   letter-spacing: 0.04em;
-  color: #f7ede9;
+  color: #ffffff;
 }
 
 .nav__links {
@@ -236,30 +232,30 @@ section.block {
   font-size: 0.82rem;
   color: var(--ink-soft);
   padding: 0.45rem 0.75rem;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   white-space: nowrap;
   transition: color 0.2s, background 0.2s;
 }
-.nav__links a:hover { color: var(--ink); background: rgba(245, 242, 238, 0.05); }
-.nav__links a.is-active { color: var(--ink); background: rgba(245, 242, 238, 0.07); }
+.nav__links a:hover { color: var(--ink); background: var(--bg-soft); }
+.nav__links a.is-active { color: var(--ink); background: var(--bg-soft); }
 
 .nav__cta {
   font-size: 0.8rem !important;
-  color: #f7ede9 !important;
-  background: var(--wine);
+  color: #ffffff !important;
+  background: var(--accent);
   letter-spacing: 0.02em;
   padding: 0.5rem 1.05rem !important;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
 }
-.nav__cta:hover { background: var(--accent) !important; }
+.nav__cta:hover { background: var(--accent-deep) !important; }
 
 .nav__toggle {
   display: none;
   width: 38px;
   height: 38px;
-  border-radius: 2px;
-  border: 1px solid var(--line);
-  background: transparent;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
   color: var(--ink);
   cursor: pointer;
   place-items: center;
@@ -280,8 +276,8 @@ section.block {
   overflow: hidden;
 }
 
-/* One soft wine light behind the subject, and a vignette. That is the whole
-   of the "cinematic" treatment - no gradients across the type. */
+/* A blush halo and a warm wash. On paper, "atmosphere" is a tint - a light
+   would just look like a stain. */
 .hero__glow {
   position: absolute;
   inset: -40% -20% auto -20%;
@@ -292,22 +288,22 @@ section.block {
 .hero__glow::before {
   content: "";
   position: absolute;
-  width: 52vw;
-  height: 52vw;
-  min-width: 340px;
-  min-height: 340px;
+  width: 46vw;
+  height: 46vw;
+  min-width: 320px;
+  min-height: 320px;
   border-radius: 50%;
-  top: -6%;
-  right: -6%;
-  background: radial-gradient(circle, rgba(92, 16, 36, 0.72), transparent 66%);
-  filter: blur(80px);
+  top: -4%;
+  right: -4%;
+  background: radial-gradient(circle, rgba(138, 28, 58, 0.11), transparent 62%);
+  filter: blur(70px);
   animation: drift 26s var(--ease) infinite alternate;
 }
 .hero__glow::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245, 242, 238, 0.045), transparent 70%);
+  background: radial-gradient(ellipse 70% 55% at 18% 8%, rgba(200, 162, 74, 0.1), transparent 68%);
 }
 
 @keyframes drift {
@@ -326,22 +322,24 @@ section.block {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-family: var(--mono);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
   border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 0.4rem 0.85rem;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: 0.42rem 0.9rem;
   margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
 }
 .hero__status i {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.18);
+  box-shadow: 0 0 0 3px var(--accent-tint);
   animation: pulse 2.6s ease-in-out infinite;
 }
 @keyframes pulse {
@@ -350,15 +348,15 @@ section.block {
 }
 
 .hero__name {
-  font-size: clamp(3rem, 10vw, 6.4rem);
+  font-size: clamp(3rem, 10vw, 6.2rem);
   line-height: 0.98;
   letter-spacing: -0.03em;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.8rem;
 }
 
 .hero__role {
   font-family: var(--mono);
-  font-size: clamp(0.78rem, 1.6vw, 0.92rem);
+  font-size: clamp(0.76rem, 1.6vw, 0.9rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
@@ -385,27 +383,35 @@ section.block {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.84rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   padding: 0.8rem 1.5rem;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   color: var(--ink);
-  background: transparent;
+  background: var(--surface);
   cursor: pointer;
   font-family: inherit;
-  transition: transform 0.25s var(--ease), border-color 0.25s, background 0.25s;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s var(--ease), box-shadow 0.25s, border-color 0.25s,
+    background 0.25s;
 }
 .btn:hover {
   transform: translateY(-2px);
-  background: rgba(245, 242, 238, 0.06);
+  box-shadow: var(--shadow);
+  border-color: var(--ink-dim);
   color: var(--ink);
 }
 .btn--primary {
-  background: var(--wine);
-  border-color: var(--wine);
-  color: #f7ede9;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(138, 28, 58, 0.2), 0 14px 30px -18px rgba(138, 28, 58, 0.6);
 }
-.btn--primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn--primary:hover {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+  color: #ffffff;
+}
 
 .hero__stats {
   display: grid;
@@ -413,8 +419,6 @@ section.block {
   gap: 1.2rem 1.5rem;
   border-top: 1px solid var(--line);
   padding-top: 1.8rem;
-  /* No max-width: the stats line up with the column above them rather than
-     stopping short at an arbitrary 640px. */
   width: 100%;
 }
 .stat__value {
@@ -426,43 +430,50 @@ section.block {
 .stat__label {
   font-size: 0.74rem;
   color: var(--ink-dim);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   line-height: 1.45;
 }
 
-/* Portrait: one photograph, treated to sit inside the palette. */
-.portrait {
-  position: relative;
-  width: clamp(190px, 24vw, 290px);
-  aspect-ratio: 4 / 5;
+/* The mark, not a photograph.
+
+   The GitHub avatar is a generated identicon, and at 290px an identicon reads
+   as a broken image. A monogram plate is deliberate, on-brand, and honest -
+   and it swaps for a real photo in one line when there is one. */
+.monogram {
+  width: clamp(180px, 22vw, 270px);
+  aspect-ratio: 1;
   flex: 0 0 auto;
-}
-.portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 2px;
-  filter: grayscale(0.75) contrast(1.1) brightness(0.92);
+  display: grid;
+  place-items: center;
   position: relative;
-  z-index: 1;
+  border-radius: var(--radius);
+  background: linear-gradient(155deg, var(--surface) 0%, var(--bg-soft) 100%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
-.portrait::before {
+.monogram::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 2px;
-  background: linear-gradient(160deg, rgba(92, 16, 36, 0.42), rgba(5, 5, 5, 0.5) 70%);
-  mix-blend-mode: screen;
-  z-index: 2;
+  background: radial-gradient(circle at 78% 18%, var(--accent-tint), transparent 58%);
 }
-.portrait::after {
+.monogram span {
+  position: relative;
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 7vw, 4.6rem);
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  line-height: 1;
+}
+.monogram::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: 2px;
-  box-shadow: inset 0 0 0 1px rgba(245, 242, 238, 0.14);
-  background: linear-gradient(180deg, transparent 55%, rgba(5, 5, 5, 0.55));
-  z-index: 3;
+  left: 0;
+  bottom: 0;
+  width: 46px;
+  height: 3px;
+  background: var(--accent);
 }
 
 /* ---------------------------------------------------------------- cards */
@@ -476,12 +487,13 @@ section.block {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.6rem;
-  transition: transform 0.4s var(--ease), border-color 0.4s, background 0.4s;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.4s var(--ease), border-color 0.4s, box-shadow 0.4s;
 }
 .card:hover {
   transform: translateY(-3px);
-  border-color: rgba(184, 68, 106, 0.45);
-  background: var(--surface-2);
+  border-color: rgba(138, 28, 58, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .card__title {
@@ -504,13 +516,12 @@ section.block {
 .chip {
   font-family: var(--mono);
   font-size: 0.68rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   color: var(--ink-soft);
+  background: var(--bg-soft);
   border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 0.22rem 0.5rem;
-  /* A long entry ("Functions (Blob, Queue, Service Bus, Cosmos, Timer)") wraps
-     inside its chip instead of forcing the card wider than its column. */
+  border-radius: var(--radius-sm);
+  padding: 0.24rem 0.52rem;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
@@ -537,9 +548,9 @@ section.block {
   content: "";
   position: absolute;
   left: 0;
-  top: 0.7em;
-  width: 6px;
-  height: 1px;
+  top: 0.72em;
+  width: 7px;
+  height: 2px;
   background: var(--accent);
 }
 
@@ -553,7 +564,7 @@ section.block {
   top: 10px;
   bottom: 10px;
   width: 1px;
-  background: linear-gradient(180deg, var(--accent), rgba(217, 164, 65, 0.05));
+  background: linear-gradient(180deg, var(--accent), var(--accent-tint));
 }
 
 .job { position: relative; padding-bottom: 2.6rem; }
@@ -563,8 +574,8 @@ section.block {
   position: absolute;
   left: -2rem;
   top: 0.62rem;
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--bg);
   border: 1px solid var(--line-strong);
@@ -572,7 +583,7 @@ section.block {
 .job.is-current::before {
   background: var(--accent);
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(217, 164, 65, 0.22);
+  box-shadow: 0 0 0 4px var(--accent-tint);
 }
 
 .job__head {
@@ -582,12 +593,12 @@ section.block {
   gap: 0.45rem 0.9rem;
   margin-bottom: 0.3rem;
 }
-.job__role { font-size: 1.04rem; font-weight: 600; }
+.job__role { font-size: 1.04rem; font-weight: 600; color: var(--ink); }
 .job__company { color: var(--accent); font-size: 0.94rem; }
 .job__period {
   font-family: var(--mono);
   font-size: 0.73rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--ink-dim);
   margin-left: auto;
   white-space: nowrap;
@@ -599,9 +610,12 @@ section.block {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.4rem 0.9rem;
-  border-left: 2px solid var(--wine);
-  padding: 0.3rem 0 0.3rem 1.2rem;
+  border-left: 2px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 1rem 1.2rem;
   margin-top: 2.4rem;
+  box-shadow: var(--shadow-sm);
 }
 .edu__period { font-family: var(--mono); font-size: 0.73rem; color: var(--ink-dim); margin-left: auto; }
 
@@ -633,11 +647,11 @@ section.block {
   font-family: var(--serif);
   font-size: 0.98rem;
   color: var(--ink);
-  border-left: 1px solid var(--wine);
+  border-left: 2px solid var(--accent-tint);
   padding-left: 0.9rem;
   margin-top: 1.1rem;
-  opacity: 0.9;
 }
+
 /* Chips and links are pushed to the bottom of the card, so a row of cards with
    different amounts of text still lines up along its bottom edge. */
 .project__foot,
@@ -655,17 +669,17 @@ section.block {
   padding-top: 1rem;
   font-size: 0.8rem;
   font-family: var(--mono);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 .project__links a {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: var(--ink-soft);
+  color: var(--accent);
   border-bottom: 1px solid transparent;
 }
-.project__links a:hover { color: var(--accent-soft); border-bottom-color: var(--accent-soft); }
-.project__links a::after { content: "\2197"; font-size: 0.85em; opacity: 0.65; }
+.project__links a:hover { color: var(--accent-deep); border-bottom-color: var(--accent-deep); }
+.project__links a::after { content: "\2197"; font-size: 0.85em; opacity: 0.7; }
 
 /* ---------------------------------------------------------------- skills */
 
@@ -673,7 +687,7 @@ section.block {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--accent-tint);
   padding: 1.15rem 0 0;
 }
 .skillgroup__name {
@@ -701,9 +715,9 @@ section.block {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
-  border: 1px solid rgba(217, 164, 65, 0.32);
-  border-radius: 2px;
-  padding: 0.2rem 0.6rem;
+  background: var(--accent-tint);
+  border-radius: var(--radius-pill);
+  padding: 0.24rem 0.7rem;
 }
 .now__item { display: grid; gap: 0.25rem; }
 .now__title { font-weight: 600; font-size: 0.97rem; }
@@ -719,12 +733,13 @@ section.block {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.5rem 1.6rem;
-  transition: transform 0.35s var(--ease), border-color 0.35s, background 0.35s;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.35s var(--ease), border-color 0.35s, box-shadow 0.35s;
 }
 .note:hover {
   transform: translateY(-3px);
-  border-color: rgba(184, 68, 106, 0.45);
-  background: var(--surface-2);
+  border-color: rgba(138, 28, 58, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 .note__meta {
   font-family: var(--mono);
@@ -736,14 +751,14 @@ section.block {
   gap: 1rem;
   margin-bottom: 0.8rem;
 }
-.note__title { font-size: 1.22rem; margin-bottom: 0.6rem; }
+.note__title { font-size: 1.22rem; margin-bottom: 0.6rem; color: var(--ink); }
 .note__summary { color: var(--ink-soft); font-size: 0.92rem; }
 .note__more {
   margin-top: auto;
   padding-top: 1.1rem;
   font-family: var(--mono);
   font-size: 0.74rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--accent);
 }
 
@@ -753,7 +768,8 @@ section.block {
   position: relative;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(150deg, rgba(92, 16, 36, 0.3), rgba(5, 5, 5, 0) 60%);
+  background: linear-gradient(150deg, var(--surface) 0%, #fbf3f5 100%);
+  box-shadow: var(--shadow);
   padding: clamp(1.9rem, 5vw, 3.2rem);
   overflow: hidden;
 }
@@ -766,21 +782,23 @@ section.block {
 .contact h2 { font-size: clamp(1.7rem, 4.4vw, 2.5rem); margin-bottom: 0.8rem; }
 .contact p { color: var(--ink-soft); max-width: 50ch; }
 
-/* The photograph returns once, at the close - a still does not need to be in
-   every section the way a video character does. */
-.contact__portrait {
-  width: clamp(120px, 16vw, 170px);
+.contact__monogram {
+  width: clamp(104px, 14vw, 150px);
   aspect-ratio: 1;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid rgba(184, 68, 106, 0.4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
   flex: 0 0 auto;
 }
-.contact__portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(0.8) contrast(1.1) brightness(0.95);
+.contact__monogram span {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  line-height: 1;
 }
 
 .emailrow {
@@ -794,8 +812,9 @@ section.block {
   font-family: var(--mono);
   font-size: 0.88rem;
   color: var(--ink);
+  background: var(--surface);
   border: 1px solid var(--line-strong);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   padding: 0.65rem 1.1rem;
 }
 .copybtn {
@@ -804,14 +823,14 @@ section.block {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   padding: 0.68rem 0.95rem;
   cursor: pointer;
 }
-.copybtn:hover { color: var(--ink); border-color: var(--line-strong); }
-.copybtn.is-done { color: var(--accent); border-color: rgba(217, 164, 65, 0.45); }
+.copybtn:hover { color: var(--ink); border-color: var(--ink-dim); }
+.copybtn.is-done { color: var(--accent); border-color: var(--accent); }
 
 /* ---------------------------------------------------------------- footer */
 
@@ -829,6 +848,7 @@ section.block {
   justify-content: space-between;
 }
 .footer a { color: var(--ink-soft); }
+.footer a:hover { color: var(--accent); }
 
 /* ---------------------------------------------------------------- article */
 
@@ -866,24 +886,26 @@ section.block {
   font-family: var(--serif);
   margin: 2rem 0;
   padding: 0.2rem 0 0.2rem 1.3rem;
-  border-left: 2px solid var(--wine);
+  border-left: 2px solid var(--accent);
   color: var(--ink);
   font-size: 1.16rem;
   line-height: 1.5;
 }
+/* Code stays dark on the light page. It is the one place the palette inverts,
+   and the contrast is the point - it reads as a distinct surface. */
 .article pre {
   margin: 1.6rem 0;
   padding: 1.2rem 1.3rem;
-  background: #0a0a0b;
-  border: 1px solid var(--line);
-  border-left: 2px solid var(--wine);
-  border-radius: 2px;
+  background: #17150f;
+  border: 1px solid #17150f;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
   overflow-x: auto;
 }
 .article code {
   font-family: var(--mono);
   font-size: 0.82rem;
-  color: #e7ded9;
+  color: #efe7dd;
   line-height: 1.65;
 }
 .article__back {
@@ -892,11 +914,12 @@ section.block {
   gap: 0.4rem;
   font-family: var(--mono);
   font-size: 0.74rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ink-soft);
   margin-bottom: 1.8rem;
 }
+.article__back:hover { color: var(--accent); }
 
 /* -------------------------------------------------------------- utilities */
 
@@ -904,7 +927,7 @@ section.block {
   position: absolute;
   left: -9999px;
   top: 0;
-  background: var(--surface-2);
+  background: var(--surface);
   color: var(--ink);
   padding: 0.7rem 1.1rem;
   z-index: 100;
@@ -932,9 +955,9 @@ section.block {
 
 @media (max-width: 900px) {
   .hero__grid { grid-template-columns: 1fr; }
-  .portrait { width: 160px; order: -1; }
+  .monogram { width: min(190px, 44vw); }
   .contact__inner { grid-template-columns: 1fr; }
-  .contact__portrait { width: 96px; }
+  .contact__monogram { width: 96px; }
 }
 
 /* Wider screens get a wider page rather than wider margins. */
@@ -942,11 +965,8 @@ section.block {
   :root { --maxw: 1240px; }
 }
 
-/* ---------------------------------------------------------------------------
-   The nav carries eight links and a button. Below about 1020px they stop
-   fitting on one line, so the panel takes over - previously the row simply
-   overflowed, which is what made the header look broken on a laptop.
-   ------------------------------------------------------------------------- */
+/* The nav carries eight links and a button. Below about 1020px they stop
+   fitting on one line, so the panel takes over - otherwise the row overflows. */
 @media (max-width: 1020px) {
   .nav__links {
     position: fixed;
@@ -956,14 +976,14 @@ section.block {
     flex-direction: column;
     align-items: stretch;
     gap: 0.1rem;
-    background: rgba(10, 10, 11, 0.98);
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 0.6rem;
     display: none;
     max-height: calc(100vh - 84px);
     overflow-y: auto;
-    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.95);
+    box-shadow: var(--shadow-lg);
   }
   .nav__links.is-open { display: flex; }
   .nav__links a { padding: 0.7rem 0.8rem; }
